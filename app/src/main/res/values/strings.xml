@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Calendar Browser</string>
+    <string name="title_activity_main">Calendar Browser</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_event">Add New Event</string>
+    <string name="eventName">Event Name</string>
+    <string name="eventNameText">Resume Workshop</string>
+    <string name="location">Location</string>
+    <string name="locationText">ASU Polytechnic Campus</string>
+    <string name="startDate">Start Date</string>
+    <string name="startTime">Start Time</string>
+    <string name="endDate">End Date</string>
+    <string name="endTime">End Time</string>
+    <string name="allDay">All Day</string>
+    <string name="description">Description</string>
+    <string name="createNewEvent">Create New Event</string>
+    <string name="saveChanges">Save Changes</string>
+    <string name="deleteEvent">Delete Event</string>
+    <string name="title_activity_view_event">View/Modify Event</string>
+    <string name="title_activity_list_of_events">View Events List</string>
+    <string name="backToMainActivity">Back to Main Activity</string>
+</resources>
