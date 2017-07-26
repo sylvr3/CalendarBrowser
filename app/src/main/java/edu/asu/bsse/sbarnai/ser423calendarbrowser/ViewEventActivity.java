@@ -110,8 +110,6 @@ public class ViewEventActivity extends ActionBarActivity {
             try {
                 Date dtt = formatter.parse(dateString);
                 Date ds = new Date(dtt.getTime());
-
-
                 Calendar beginCal = Calendar.getInstance();
                 beginCal.setTimeInMillis(ds.getTime());
                 startDate.updateDate(beginCal.get(Calendar.YEAR), beginCal.get(Calendar.MONTH), beginCal.get(Calendar.DATE));

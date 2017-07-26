@@ -22,6 +22,7 @@ package edu.asu.bsse.sbarnai.ser423calendarbrowser;
  * @version April 30, 2015
  **/
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -32,6 +33,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.CalendarContract;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -57,6 +59,11 @@ public class MainActivity extends Activity {
         calendarView = (CalendarView) findViewById(R.id.calendar);
         initializeCalendar();
         addEventButton = (Button)findViewById(R.id.addEventButton);
+        ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.WRITE_CALENDAR);
+        ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.WRITE_CALENDAR);
+
     }
 
     public void initializeCalendar() {
