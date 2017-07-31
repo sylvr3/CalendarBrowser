@@ -91,6 +91,7 @@ public class AddEventActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // todo: convert time to GMT
     public void createNewEvent(View v) {
 
         Calendar beginCal = Calendar.getInstance();
