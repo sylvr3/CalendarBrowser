@@ -41,6 +41,7 @@ import android.widget.CalendarView.OnDateChangeListener;
 import android.app.Activity;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -88,9 +89,19 @@ public class MainActivity extends Activity {
                     ContentResolver contentResolver = context.getContentResolver();
                     Cursor cursor = getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, null, null);
 
+                    // convert date/time to correct time zone
+
+                    Calendar startCal = convertToCorrectTime(startTime.getTimeInMillis());
+                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+                    long timeResult = startCal.getTimeInMillis();
+                    Date resultdate = new Date(timeResult);
+
+                    convertToCorrectTime(endTime.getTimeInMillis());
+
+
                     if (cursor.moveToLast() && cursor != null) {
 
-                        Toast.makeText(getApplicationContext(), cursor.getString(1) + " on " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), cursor.getString(1) + " on " + (new Date(timeResult)).toString(), Toast.LENGTH_LONG).show();
 
                     }
 
@@ -123,6 +134,28 @@ public class MainActivity extends Activity {
     public void viewListOfEvents(View v) {
         Intent newActivityIntent = new Intent(MainActivity.this, ListOfEventsActivity.class);
         startActivity(newActivityIntent);
+
+    }
+
+    private Calendar convertToCorrectTime(long time) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+        Calendar cal = Calendar.getInstance();
+        int offset2 = cal.getTimeZone().getOffset(cal.getTimeInMillis());
+        Date da2 = new Date(time-(long)offset2);
+        String dateString2 = formatter.format(da2);
+        try {
+            Date dtt = formatter.parse(dateString2);
+            Date ds = new Date(dtt.getTime());
+            cal.setTimeInMillis(ds.getTime());
+
+        }
+        catch (ParseException pe)
+        {
+            pe.printStackTrace();
+        }
+
+        return cal;
 
     }
 

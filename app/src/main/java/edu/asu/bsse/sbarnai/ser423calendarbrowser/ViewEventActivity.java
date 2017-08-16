@@ -106,9 +106,26 @@ public class ViewEventActivity extends ActionBarActivity {
             SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
             Calendar cal = Calendar.getInstance();
-            int offset = cal.getTimeZone().getOffset(cal.getTimeInMillis());
-            Date da = new Date(eventBeginTime-(long)offset);
-            String dateString = formatter.format(da);
+            TimeZone tz = cal.getTimeZone();
+          //  Date now = new Date();
+          //  int offsetFromUtc = tz.getOffset(now.getTime()) / 36000000;
+           // String dateString = String.valueOf(offsetFromUtc);
+         //   String dateString = formatter.format(now);
+
+
+
+
+
+            int gmtOffset = TimeZone.getDefault().getRawOffset();
+            long now = eventCursor.getLong(4) + gmtOffset;
+            Date d = new Date(now);
+            String dateString = formatter.format(d);
+
+
+
+            //  int offset = cal.getTimeZone().getOffset(cal.getTimeInMillis());
+          //  Date da = new Date(eventBeginTime-(long)offset);
+         //   String dateString = formatter.format(da);
             //String dateString = formatter.format(new Date(eventBeginTime));
 
             try {
