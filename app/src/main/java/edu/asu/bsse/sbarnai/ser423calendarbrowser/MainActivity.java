@@ -46,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -91,12 +92,25 @@ public class MainActivity extends Activity {
 
                     // convert date/time to correct time zone
 
-                    Calendar startCal = convertToCorrectTime(startTime.getTimeInMillis());
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-                    long timeResult = startCal.getTimeInMillis();
-                    Date resultdate = new Date(timeResult);
 
-                    convertToCorrectTime(endTime.getTimeInMillis());
+                    TimeZone tz = startTime.getTimeZone();  // get current timezone
+
+                    SimpleDateFormat dateFormatter = new SimpleDateFormat("MM-dd-yyyy HH:mm"); //this format changeable
+                    dateFormatter.setTimeZone(tz);
+                    String dateString = dateFormatter.format(startTime.getTime());
+                    Calendar startCal;
+                    long timeResult = 0;
+
+                    try {
+                        Date dtt = dateFormatter.parse(dateString);
+                        Date ds = new Date(dtt.getTime());
+                        startCal = Calendar.getInstance();
+                        startCal.setTimeInMillis(ds.getTime());
+                        timeResult = startCal.getTimeInMillis();
+
+                    } catch (ParseException pe) {
+                        pe.printStackTrace();
+                    }
 
 
                     if (cursor.moveToLast() && cursor != null) {
@@ -106,14 +120,16 @@ public class MainActivity extends Activity {
                     }
 
                     String eventName = cursor.getString(1);
+
+
                 }
                 catch (CursorIndexOutOfBoundsException ce)
                 {
                     ce.printStackTrace();
                 }
 
-            }
 
+            }
 
 
 
@@ -136,7 +152,7 @@ public class MainActivity extends Activity {
         startActivity(newActivityIntent);
 
     }
-
+/*
     private Calendar convertToCorrectTime(long time) {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
@@ -158,5 +174,6 @@ public class MainActivity extends Activity {
         return cal;
 
     }
+    */
 
 }

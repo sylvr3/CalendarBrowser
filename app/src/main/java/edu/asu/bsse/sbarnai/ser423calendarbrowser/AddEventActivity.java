@@ -36,7 +36,10 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 
@@ -126,13 +129,17 @@ public class AddEventActivity extends ActionBarActivity {
             event.put("dtstart", String.valueOf(beginTime));
             event.put("dtend", String.valueOf(endingTime));
 
-            // may need to comment out:
-
-              event.put(CalendarContract.Events.ALL_DAY, 1);
+            event.put(CalendarContract.Events.ALL_DAY, 1);
 
         }
 
-        event.put("eventTimezone", TimeZone.getDefault().getID());
+
+
+      //  TimeZone.getDefault().setID();
+
+        beginCal.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        event.put("eventTimezone", beginCal.getTimeZone().getID());
 
         Uri uri = getContentResolver().insert(CalendarContract.Events.CONTENT_URI, event);
 
@@ -144,5 +151,13 @@ public class AddEventActivity extends ActionBarActivity {
 
 
     }
+    public static Date localToGMT(Date d) {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date gmt = new Date(sdf.format(date));
+        return gmt;
+    }
+
 
 }
