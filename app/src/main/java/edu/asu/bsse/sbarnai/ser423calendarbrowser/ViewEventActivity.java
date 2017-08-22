@@ -2,20 +2,20 @@ package edu.asu.bsse.sbarnai.ser423calendarbrowser;
 
 /**
  * Copyright 2015 Sylvia Barnai.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the “License”);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *
+ * <p>
+ * <p>
  * http://www.apache.org/license/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an “AS IS” BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * <p>
  * Purpose: This activity allows the user to view information about a particular event in their calendar.
  *
  * @author Sylvia Barnai mailto:Sylvia.Barnai@asu.edu
@@ -39,6 +39,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -77,9 +78,9 @@ public class ViewEventActivity extends ActionBarActivity {
         descriptionTextView = (EditText) findViewById(R.id.descriptionText);
         saveChanges = (Button) findViewById(R.id.saveChanges);
 
-        Uri calendarURI = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI,eventId);
+        Uri calendarURI = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
 
-        Cursor eventCursor = cr.query(calendarURI, new String[]{ CalendarContract.Events.CALENDAR_ID, CalendarContract.Events._ID, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.EVENT_LOCATION, CalendarContract.Events.ALL_DAY}, null, null, null);
+        Cursor eventCursor = cr.query(calendarURI, new String[]{CalendarContract.Events.CALENDAR_ID, CalendarContract.Events._ID, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.EVENT_LOCATION, CalendarContract.Events.ALL_DAY}, null, null, null);
 
         System.out.println(calendarURI.toString());
         String eventName;
@@ -98,84 +99,54 @@ public class ViewEventActivity extends ActionBarActivity {
             location = eventCursor.getString(6);
             allDay = eventCursor.getString(7);
 
-            System.out.println("eventName: " + eventName + "\n" + " description: " + description + "\n" + " eventBeginTime: " + eventBeginTime + "\n" + " eventEndTime: " + eventEndTime + "/n" +  " event location: " + location + "allDay" + allDay);
+            System.out.println("eventName: " + eventName + "\n" + " description: " + description + "\n" + " eventBeginTime: " + eventBeginTime + "\n" + " eventEndTime: " + eventEndTime + "/n" + " event location: " + location + "allDay" + allDay);
             eventNameTextView.setText(eventName);
             locationTextView.setText(location);
             descriptionTextView.setText(description);
 
-            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
-          //  Date now = new Date();
-          //  int offsetFromUtc = tz.getOffset(now.getTime()) / 36000000;
-           // String dateString = String.valueOf(offsetFromUtc);
-         //   String dateString = formatter.format(now);
-
-
-
-
-
-            Calendar cal = Calendar.getInstance();
-            TimeZone tz = cal.getTimeZone();  // get current timezone
-
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("MM-dd-yyyy HH:mm"); //this format changeable
-            dateFormatter.setTimeZone(tz);
-            String dateString = dateFormatter.format(eventBeginTime);
-
-
-
-
-
-
-
+            convertDate(eventBeginTime, startDate, startTime);
+            convertDate(eventEndTime, endDate, endTime);
 
             //  int offset = cal.getTimeZone().getOffset(cal.getTimeInMillis());
-          //  Date da = new Date(eventBeginTime-(long)offset);
-         //   String dateString = formatter.format(da);
+            //  Date da = new Date(eventBeginTime-(long)offset);
+            //   String dateString = formatter.format(da);
             //String dateString = formatter.format(new Date(eventBeginTime));
-
-            try {
-                Date dtt = formatter.parse(dateString);
-                Date ds = new Date(dtt.getTime());
-                Calendar beginCal = Calendar.getInstance();
-                beginCal.setTimeInMillis(ds.getTime());
-                startDate.updateDate(beginCal.get(Calendar.YEAR), beginCal.get(Calendar.MONTH), beginCal.get(Calendar.DATE));
-                startTime.setCurrentHour(beginCal.get(Calendar.HOUR_OF_DAY));
-                startTime.setCurrentMinute(beginCal.get(Calendar.MINUTE));
-
-
-            }
-            catch (ParseException pe)
-            {
-                pe.printStackTrace();
-            }
-
-
-            Calendar cal2 = Calendar.getInstance();
-            TimeZone tz2 = cal.getTimeZone();  // get current timezone
-
-            SimpleDateFormat dateFormatter2 = new SimpleDateFormat("MM-dd-yyyy HH:mm"); //this format changeable
-            dateFormatter2.setTimeZone(tz);
-            String dateString2 = dateFormatter.format(eventEndTime);
-
-            try {
-                Date dtt = formatter.parse(dateString2);
-                Date ds = new Date(dtt.getTime());
-                Calendar endCal = Calendar.getInstance();
-                endCal.setTimeInMillis(ds.getTime());
-                endDate.updateDate(endCal.get(Calendar.YEAR), endCal.get(Calendar.MONTH), endCal.get(Calendar.DATE));
-                endTime.setCurrentHour(endCal.get(Calendar.HOUR_OF_DAY));
-                endTime.setCurrentMinute(endCal.get(Calendar.MINUTE));
-
-            }
-            catch (ParseException pe)
-            {
-                pe.printStackTrace();
-            }
 
             eventCursor.close();
         }
 
     }
+
+    private void convertDate(Long time, DatePicker dp, TimePicker tp) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+        String dateString = formatter.format(new Date(time));
+        try {
+            Date dtt = formatter.parse(dateString);
+            Date ds = new Date(dtt.getTime());
+            TimeZoneHandler tzh = new TimeZoneHandler();
+            Date convertDate = tzh.changeUTCToLOCAL(ds);
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(convertDate.getTime());
+            dp.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE));
+            tp.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
+            tp.setCurrentMinute(cal.get(Calendar.MINUTE));
+
+
+        } catch (ParseException pe)
+
+
+        {
+
+
+            pe.printStackTrace();
+
+
+        }
+
+    }
+
+
 
 
     @Override
@@ -226,7 +197,7 @@ public class ViewEventActivity extends ActionBarActivity {
         event.put("description", String.valueOf(descriptionTextView.getText()));
         event.put("eventLocation", String.valueOf(locationTextView.getText()));
 
-        if (allDayTextView.isChecked()==false) {
+        if (allDayTextView.isChecked() == false) {
             beginCal.set(startDate.getYear(), startDate.getMonth(), startDate.getDayOfMonth(), startTime.getCurrentHour(), startTime.getCurrentMinute());
             long beginTime = beginCal.getTimeInMillis();
             event.put("dtstart", beginTime);
@@ -235,9 +206,7 @@ public class ViewEventActivity extends ActionBarActivity {
             long endingTime = endCal.getTimeInMillis();
             event.put("dtend", endingTime);
             event.put(CalendarContract.Events.ALL_DAY, 0);
-        }
-
-        else {
+        } else {
 
             startTime.setCurrentHour(0);
             startTime.setCurrentMinute(0);
@@ -264,8 +233,7 @@ public class ViewEventActivity extends ActionBarActivity {
 
     }
 
-    public void deleteEvent(View v)
-    {
+    public void deleteEvent(View v) {
         Intent intent = getIntent();
         long eventId = intent.getLongExtra("selectedeventid", 0);
         Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);

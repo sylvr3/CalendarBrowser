@@ -36,8 +36,6 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
-
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -107,11 +105,10 @@ public class AddEventActivity extends ActionBarActivity {
 
         if (allDay.isChecked()==false) {
             beginCal.set(startDate.getYear(), startDate.getMonth(), startDate.getDayOfMonth(), startTime.getCurrentHour(), startTime.getCurrentMinute());
-            long beginTime = beginCal.getTimeInMillis();
-            event.put("dtstart", String.valueOf(beginTime));
+
             endCal.set(endDate.getYear(), endDate.getMonth(), endDate.getDayOfMonth(), endTime.getCurrentHour(), endTime.getCurrentMinute());
-            long endingTime = endCal.getTimeInMillis();
-            event.put("dtend", String.valueOf(endingTime));
+            //long endingTime = endCal.getTimeInMillis();
+            //event.put("dtend", String.valueOf(endingTime));
 
             event.put(CalendarContract.Events.ALL_DAY, 0);
         }
@@ -124,22 +121,23 @@ public class AddEventActivity extends ActionBarActivity {
             endTime.setCurrentMinute(0);
             beginCal.set(startDate.getYear(), startDate.getMonth(), startDate.getDayOfMonth(), 0, 0);
             endCal.set(endDate.getYear(), endDate.getMonth(), endDate.getDayOfMonth(), 0, 0);
-            long beginTime = beginCal.getTimeInMillis();
-            long endingTime = endCal.getTimeInMillis();
-            event.put("dtstart", String.valueOf(beginTime));
-            event.put("dtend", String.valueOf(endingTime));
+
+            // may need to comment out:
 
             event.put(CalendarContract.Events.ALL_DAY, 1);
 
         }
 
+        Date d1 = setDate(beginCal, startDate, startTime);
+        Date d2 = setDate(endCal, endDate, endTime);
 
+        long beginTime = d1.getTime();
+        event.put("dtstart", String.valueOf(beginTime));
 
-      //  TimeZone.getDefault().setID();
+        long endingTime = d2.getTime();
+        event.put("dtend", String.valueOf(endingTime));
 
-        beginCal.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        event.put("eventTimezone", beginCal.getTimeZone().getID());
+        event.put("eventTimezone", TimeZone.getTimeZone("UTC").getID());
 
         Uri uri = getContentResolver().insert(CalendarContract.Events.CONTENT_URI, event);
 
@@ -151,13 +149,23 @@ public class AddEventActivity extends ActionBarActivity {
 
 
     }
-    public static Date localToGMT(Date d) {
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date gmt = new Date(sdf.format(date));
-        return gmt;
-    }
 
+    private Date setDate(Calendar cal, DatePicker dp, TimePicker tp) {
+
+        cal.set(Calendar.YEAR, dp.getYear());
+        cal.set(Calendar.MONTH, dp.getMonth());
+        cal.set(Calendar.DATE, dp.getDayOfMonth());
+        cal.set(Calendar.HOUR_OF_DAY, tp.getCurrentHour());
+        cal.set(Calendar.MINUTE, tp.getCurrentMinute());
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date date = cal.getTime();
+        TimeZoneHandler tzh = new TimeZoneHandler();
+        Date d1 = tzh.localToUTC(date);
+
+        return d1;
+
+
+    }
 
 }
