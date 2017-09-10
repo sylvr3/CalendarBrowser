@@ -159,11 +159,23 @@ public class AddEventActivity extends ActionBarActivity {
         cal.set(Calendar.MINUTE, tp.getCurrentMinute());
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
+/*
+DateFormat df = DateFormat.getTimeInstance();
+df.setTimeZone(TimeZone.getTimeZone("gmt"));
+String gmtTime = df.format(new Date());
+Date newDate = df.parse(gmtTime);
+
+    cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+    Date date = cal.getTime();
+    cal.getTimeZone();
+    */
+
         Date date = cal.getTime();
         TimeZoneHandler tzh = new TimeZoneHandler();
-        Date d1 = tzh.localToUTC(date);
+        String date1 = tzh.dateToUTC(date);
+        return new Date();
 
-        return d1;
 
 
     }

@@ -1,6 +1,7 @@
 package edu.asu.bsse.sbarnai.ser423calendarbrowser;
 
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,6 +14,89 @@ public class TimeZoneHandler {
 
     private static final String UTC_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private Timer mTimer;
+
+    public static Date changeUTCToLOCAL(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        sdf.setTimeZone(TimeZone.getDefault());
+        try {
+            return sdf.parse(sdf.format(calendar.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new Date();
+    }
+
+    //finds the difference between the future timestamp and the current timestamp
+    public static long diffBetweenLOCALTimes(String futureTimeStamp) {
+        Date present;
+        Date future;
+
+        Calendar calendar = Calendar.getInstance();
+        present = calendar.getTime();//getCurrentTimeUTC();
+
+        SimpleDateFormat format = new SimpleDateFormat(UTC_FORMAT);
+        format.setTimeZone(TimeZone.getDefault());
+        try {
+            future = format.parse(futureTimeStamp);
+            //in milliseconds
+            long difference = future.getTime() - present.getTime();
+
+            return difference;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return (long) 0.0;
+    }
+
+    // do this when I am adding events
+    public static Date localToUTC(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date gmt = new Date(sdf.format(date));
+        return gmt;
+    }
+
+    public static String dateToUTC(Date date){
+        return dateToUTC(date.toString());
+    }
+
+    public static String dateToUTC(String date){
+        final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            Date noWayThisShhWorked = sdf.parse(date);
+        } catch(Exception s){
+            String F = "";
+        }
+        return "";
+    }
+
+    public static String utcToLocaleDate(Date utcDate){
+        return utcToLocaleDate(utcDate.toString());
+    }
+
+    public static String utcToLocaleDate(String utcDate){
+        DateFormat dateFormatUtc = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormatUtc.setTimeZone(TimeZone.getDefault());
+
+        try {
+            Date dateInPDT = dateFormat.parse(utcDate);
+            return dateFormatUtc.format(dateInPDT);
+        } catch (Exception e){
+            String hit = "";
+        }
+
+        return "";
+    }
+
+
+    /*
 
 
     // do this when I am VIEWING events
@@ -108,7 +192,7 @@ public class TimeZoneHandler {
         //   endTime.setCurrentMinute(endCal.get(Calendar.MINUTE));
 
         // todo: create a new Date object based on the values selected in date and time pickers
-        /*
+
         Calendar cal = Calendar.getInstance();
 cal.set(Calendar.YEAR, year);
 cal.set(Calendar.MONTH, monthOfYear);
@@ -140,7 +224,7 @@ Calendar beginCal = Calendar.getInstance();
 
 
 
-         */
+
         Date datet = new Date();
         System.out.println("UTC to local");
         Date test = new Date();
@@ -153,5 +237,6 @@ Calendar beginCal = Calendar.getInstance();
 
 
     }
+    */
 
 }
