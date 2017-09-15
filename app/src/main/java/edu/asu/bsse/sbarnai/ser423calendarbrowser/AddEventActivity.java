@@ -36,6 +36,9 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -173,8 +176,11 @@ Date newDate = df.parse(gmtTime);
 
         Date date = cal.getTime();
         TimeZoneHandler tzh = new TimeZoneHandler();
-        String date1 = tzh.dateToUTC(date);
-        return new Date();
+        Date newDate = tzh.dateToUTC(date);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        //return new Date();
+        Toast.makeText(getApplicationContext(), "The new date is : " + sdf.format(newDate), Toast.LENGTH_LONG).show();
+        return newDate;
 
 
 

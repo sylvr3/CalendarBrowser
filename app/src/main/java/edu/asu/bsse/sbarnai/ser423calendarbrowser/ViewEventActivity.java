@@ -39,6 +39,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -104,8 +105,16 @@ public class ViewEventActivity extends ActionBarActivity {
             locationTextView.setText(location);
             descriptionTextView.setText(description);
 
-            convertDate(eventBeginTime, startDate, startTime);
-            convertDate(eventEndTime, endDate, endTime);
+            Date startDateConv = convertDate(eventBeginTime, startDate, startTime);
+            Date endDateConv = convertDate(eventEndTime, endDate, endTime);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            //return new Date();
+            Toast.makeText(getApplicationContext(), "The new start date time is : " + sdf.format(startDateConv), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "The new end date time is : " + sdf.format(endDateConv), Toast.LENGTH_LONG).show();
+
+
+
 
             //  int offset = cal.getTimeZone().getOffset(cal.getTimeInMillis());
             //  Date da = new Date(eventBeginTime-(long)offset);
@@ -117,15 +126,16 @@ public class ViewEventActivity extends ActionBarActivity {
 
     }
 
-    private void convertDate(Long time, DatePicker dp, TimePicker tp) {
+    private Date convertDate(Long time, DatePicker dp, TimePicker tp) {
         SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        Date convertDate  = null;
 
         String dateString = formatter.format(new Date(time));
         try {
-            Date dtt = formatter.parse(dateString);
-            Date ds = new Date(dtt.getTime());
+            Date ds = formatter.parse(dateString);
             TimeZoneHandler tzh = new TimeZoneHandler();
-            Date convertDate = tzh.changeUTCToLOCAL(ds);
+            convertDate = tzh.changeUTCToLOCAL(ds);
+
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(convertDate.getTime());
             dp.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE));
@@ -143,6 +153,7 @@ public class ViewEventActivity extends ActionBarActivity {
 
 
         }
+        return convertDate;
 
     }
 

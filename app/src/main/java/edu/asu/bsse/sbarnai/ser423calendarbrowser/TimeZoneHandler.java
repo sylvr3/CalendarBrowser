@@ -1,6 +1,8 @@
 package edu.asu.bsse.sbarnai.ser423calendarbrowser;
 
 
+import android.widget.Toast;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,17 +18,23 @@ public class TimeZoneHandler {
     private Timer mTimer;
 
     public static Date changeUTCToLOCAL(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-//sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        sdf.setTimeZone(TimeZone.getDefault());
+        Date d = null;
+
+
+        SimpleDateFormat outputFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        outputFmt.setTimeZone(TimeZone.getDefault());
+
         try {
-            return sdf.parse(sdf.format(calendar.getTime()));
+            String dateStr = outputFmt.format(date.getTime());
+            d = outputFmt.parse(dateStr);
+
         } catch (ParseException e) {
-            e.printStackTrace();
+
         }
-        return new Date();
+
+
+
+        return d;
     }
 
     //finds the difference between the future timestamp and the current timestamp
@@ -61,26 +69,56 @@ public class TimeZoneHandler {
         return gmt;
     }
 
-    public static String dateToUTC(Date date){
-        return dateToUTC(date.toString());
-    }
 
-    public static String dateToUTC(String date){
-        final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+/*
+    public static Date dateToUTC(Date date){
+        final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
-            Date noWayThisShhWorked = sdf.parse(date);
+
+            String dateStr = sdf.format(date);
+            date = sdf.parse(dateStr);
         } catch(Exception s){
             String F = "";
         }
-        return "";
+        return date;
+
+    }
+*/
+
+    public static Date dateToUTC(Date date) {
+        Date d = null;
+
+        // Date localTime = new Date();
+        //localTime.setT
+
+        //creating DateFormat for converting time from local timezone to GMT
+        DateFormat converter = new SimpleDateFormat("dd/MM/yyyy:HH:mm:ss");
+        converter.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        //getting GMT timezone, you can get any timezone e.g. UTC
+        //converter.setTimeZone(TimeZone.getDefault());
+
+        System.out.println("UTC: " + date);;
+        System.out.println("time in MST : " + converter.format(date.getTime()));
+        try {
+            d = converter.parse(converter.format(date.getTime()));
+
+        } catch (ParseException pe) {
+
+        }
+
+
+        return d;
+
     }
 
-    public static String utcToLocaleDate(Date utcDate){
+
+    public static String utcToLocaleDate(Date utcDate) {
         return utcToLocaleDate(utcDate.toString());
     }
 
-    public static String utcToLocaleDate(String utcDate){
+    public static String utcToLocaleDate(String utcDate) {
         DateFormat dateFormatUtc = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormatUtc.setTimeZone(TimeZone.getDefault());
@@ -88,7 +126,7 @@ public class TimeZoneHandler {
         try {
             Date dateInPDT = dateFormat.parse(utcDate);
             return dateFormatUtc.format(dateInPDT);
-        } catch (Exception e){
+        } catch (Exception e) {
             String hit = "";
         }
 
